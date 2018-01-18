@@ -14,6 +14,10 @@ from overwatch_api.constants import *
 #bot setup
 client = discord.Client()
 
+#Token Grab
+TF = open(“token.txt”,”r”)
+token = TF.read()
+
 #Display bot info on launch
 @client.event
 async def on_ready():
@@ -92,4 +96,4 @@ async def botmsg_delete(botmsg):
     return
         
 #client ID for discord, to be removed during git upload
-client.run('FILLER')
+client.run(token)
