@@ -15,7 +15,7 @@ from overwatch_api.constants import *
 client = discord.Client()
 
 #Token Grab
-TF = open(“token.txt”,”r”)
+TF = open('token.txt','r')
 token = TF.read()
 
 #Display bot info on launch
