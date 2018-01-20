@@ -47,21 +47,22 @@ async def on_message(message):
         else:
             pass
 
-        try:
-            #Runs stat_grab with provided bTag (More details in stat_grab)
+        #try:
+        #Runs stat_grab with provided bTag (More details in stat_grab)
             data = await stat_grab(bTag)
             #Runs message_create function from overbot_comp
-            stats = message_create(data, bTag, 2)
+            embed = message_create_test(data, bTag)
             await botmsg_delete(botmsg) #delete old grabbing stats message
-            await client.send_message(message.channel, stats) #send message with stats
-            #Create console report for successful stat grab
-            print("[✓]Successful stat grab for " + bTag)
-        except:
+            await client.send_message(message.channel, embed=embed) #send message with stats
+        #except:
             await botmsg_delete(botmsg) #delete old grabbing stats message
             #Create console report for failed stat grab
-            print("[!!!]Error grabbing stats for " + bTag)
+            print("[!!!]Error grabbing comp stats for " + bTag)
             await client.send_message(message.channel, "Error grabbing stats... :cry: \nMaybe retry?")
-            
+
+
+
+        
 async def stat_grab(bTag):
     # Instantiating the api
     client = AsyncOWAPI()

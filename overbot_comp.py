@@ -4,12 +4,11 @@
 ##>>          and puts them into one friendly string
 ##>>          that can then be sent via a message in discord
 
-def message_create(data, bTag, gametype):
-    #Set gametype
-    if gametype == 1:
-        gametype = 'quickplay'
-    elif gametype == 2:
-        gametype = 'competitive'
+import discord
+
+def message_create(data, bTag):
+
+    gametype = 'competitive'
     
     ##DATA COLLECTION##
     #Medals
@@ -17,8 +16,7 @@ def message_create(data, bTag, gametype):
     silver = str("{:.0f}".format(data['pc']['us'][gametype]['game_stats']['medals_silver']))
     bronze = str("{:.0f}".format(data['pc']['us'][gametype]['game_stats']['medals_bronze']))
     #Current Season Competitive Rank:
-    if gametype == 'competitive':
-        compRank = str(data['pc']['us'][gametype]['overall_stats']['comprank'])
+    compRank = str(data['pc']['us'][gametype]['overall_stats']['comprank'])
     #Current Prestige (Stars)
     prestige = data['pc']['us'][gametype]['overall_stats']['prestige']
     #Current Level
@@ -28,40 +26,29 @@ def message_create(data, bTag, gametype):
     bName,bNum = bTag.split('#')
     moLink = "https://masteroverwatch.com/profile/pc/global/" + bName + '-' + bNum
     #And generate overbuff link
-    obLink = "https://www.overbuff.com/players/pc/" + bName + '-' + bNum 
-    
+    #obLink = "https://www.overbuff.com/players/pc/" + bName + '-' + bNum ##Currently unused in this version, but may bring back later
 
-    #initiates the message
-    message = ''
+    #initiate the embed and also provide link to Master Overwatch profile
+    embed=discord.Embed(title="Master Overwatch Link", url=moLink, color=0xE69138)
 
-    ##If competitive stats are called
-    if gametype == 'competitive':
-        #Adds the comp header to the message
-        message += "**-=Competitive stats for " + bTag + "=-**\n"
-        #Adds comp SR to message
-        message += "Rank: " + compRank + '*SR*'
-        
-    ##If quickplay stats are called
-    if gametype == 'quickplay':
-        #Adds the qp header to the message
-        message += "**-=Quickplay stats for " + bTag + "=-**\n"
-        
-    #Adds player prestige(stars) level to message
-    if prestige == 0:
-        message += '\nLevel: '
-    else:
-        message += '\nLevel: ' + str(prestige)
+    #List who the stats are for and that they are comp stats
+    embed.add_field(name='-=Comp Stats for ' + bTag + '=-', value="Filler", inline=False)
 
     #Adds player base level to message
     if int(level) < 10 and prestige > 0:
         level = '0' + level
-    message += level + "\nMedals(Gold/Silver/Bronze): "
-    #Adds Medals to message
-    message += gold + "/" + silver + "/" + bronze
 
-    #Adds Master Overwatch and Overbuff links to end of message:
-    message += "\n\nMore at:\n● <" + moLink + '>'
-    message += "\n● <" + obLink + '>'
+    #Adds player prestige(stars) level to message
+    if prestige == 0:
+        embed.add_field(name='Level: ', value=level, inline=False)
+    else:
+        embed.add_field(name='Level:', value=str(prestige)+level, inline=False)
+
+    #Add Season Rating/Rank
+    embed.add_field(name="Season Rating:", value=compRank, inline=False)
+
+    #Add Medals to Embed
+    embed.add_field(name="Medals(Gold/Silver/Bronze): ", value=gold + "/" + silver + "/" + bronze, inline=False)
 
 
-    return message
+    return embed
