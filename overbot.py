@@ -17,6 +17,7 @@ client = discord.Client()
 #Token Grab
 TF = open('token.txt','r')
 token = TF.read()
+TF.close()
 
 #Display bot info on launch
 @client.event
@@ -48,10 +49,17 @@ async def on_message(message):
             pass
 
         try:
-        #Runs stat_grab with provided bTag (More details in stat_grab)
+            #Runs stat_grab with provided bTag (More details in stat_grab)
             data = await stat_grab(bTag)
-            #Runs message_create function from overbot_comp
-            embed = message_create(data, bTag)
+            #Does this user have competitive stats? (I may have it redirect to the quickplay command later if false)
+            if data['pc']['us']['competitive']['overall_stats']['comprank']:
+                    #Runs message_create function from overbot_comp
+                embed = message_create(data, bTag)
+            else:
+                await client.send_message(message.channel, 'No competitive stats for ' + bTag + '!')
+                print("[!!!]No comp stats for " + bTag)
+                await botmsg_delete(botmsg)
+                return
             await botmsg_delete(botmsg) #delete old grabbing stats message
             await client.send_message(message.channel, embed=embed) #send message with stats
         except:
@@ -85,11 +93,7 @@ async def stat_grab(bTag):
                 tries += 1
                 if tries == 3:
                     return "Error grabbing stats.."
-    #report failed stat grab to end user
-    if tries == 3:
-        await client.send_message(message.channel, "Error grabbing stats...")
-        return "Error grabbing stats.."
-    return data
+        return data
 
 #just to make the code a little easier to read
 async def botmsg_delete(botmsg):
