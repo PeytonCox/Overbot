@@ -31,8 +31,8 @@ def message_create(data, bTag):
     #initiate the embed and also provide link to Master Overwatch profile
     embed=discord.Embed(title="Master Overwatch Link", url=moLink, color=0xE69138)
 
-    #List who the stats are for and that they are comp stats
-    embed.add_field(name='-=Comp Stats for ' + bTag + '=-', value="Filler", inline=False)
+    #List who the stats are for
+    embed.add_field(name='-=Comp Stats for ' + bTag + '=-', value="Region: US     Platform: PC", inline=False) #temporary hardcode region and platform
 
     #Adds player base level to message
     if int(level) < 10 and prestige > 0:
