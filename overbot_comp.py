@@ -71,7 +71,6 @@ def message_create(data, bTag, topHeroes):
     embed.add_field(name="Support:", value=str(topHeroes['mostPlayedSupp']), inline=True)
     embed.add_field(name="Most played Overall:", value=str(topHeroes['mostPlayedHero']), inline=False)
     heroUrl="http://pcox.club/resources/heroes/" + str(topHeroes['mostPlayedHero']) + ".png"
-    print(heroUrl)
     embed.set_image(url=heroUrl)
 
 

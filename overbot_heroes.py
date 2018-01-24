@@ -41,8 +41,6 @@ async def top_heroes(bTag):
     
     while count <= 23:
 
-        print(heroes[heroType][str(count)]+": "+str(data['pc']['us']['playtime']['quickplay'][heroes[heroType][str(count)]]))
-
         if (data['pc']['us']['playtime']['quickplay'][heroes[heroType][str(count)]] > mostTimeHero):
             mostPlayedHero=str(count)
             mostTimeHero = data['pc']['us']['playtime']['quickplay'][heroes[heroType][str(count)]]
