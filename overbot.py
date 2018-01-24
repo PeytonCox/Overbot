@@ -8,6 +8,7 @@ import discord
 import asyncio
 import aiohttp
 from overbot_comp import message_create
+from overbot_heroes import top_heroes
 from overwatch_api.core import AsyncOWAPI
 from overwatch_api.constants import *
 
@@ -48,25 +49,25 @@ async def on_message(message):
         else:
             pass
 
-        try:
-            #Runs stat_grab with provided bTag (More details in stat_grab)
-            data = await stat_grab(bTag)
-            #Does this user have competitive stats? (I may have it redirect to the quickplay command later if false)
-            if data['pc']['us']['competitive']['overall_stats']['comprank']:
-                    #Runs message_create function from overbot_comp
-                embed = message_create(data, bTag)
-            else:
-                await client.send_message(message.channel, 'No competitive stats for ' + bTag + '!')
-                print("[!!!]No comp stats for " + bTag)
-                await botmsg_delete(botmsg)
-                return
-            await botmsg_delete(botmsg) #delete old grabbing stats message
-            await client.send_message(message.channel, embed=embed) #send message with stats
-        except:
-            await botmsg_delete(botmsg) #delete old grabbing stats message
-            #Create console report for failed stat grab
-            print("[!!!]Error grabbing comp stats for " + bTag)
-            await client.send_message(message.channel, "Error grabbing stats... :cry: \nMaybe retry?")
+        #try:
+        #Runs stat_grab with provided bTag (More details in stat_grab)
+        data,topHeroes = await stat_grab(bTag)
+        #Does this user have competitive stats? (I may have it redirect to the quickplay command later if false)
+        if data['pc']['us']['competitive']['overall_stats']['comprank']:
+            #Runs message_create function from overbot_comp
+            embed = message_create(data, bTag, topHeroes)
+        else:
+            await client.send_message(message.channel, 'No competitive stats for ' + bTag + '!')
+            print("[!!!]No comp stats for " + bTag)
+            await botmsg_delete(botmsg)
+            return
+        await botmsg_delete(botmsg) #delete old grabbing stats message
+        await client.send_message(message.channel, embed=embed) #send message with stats
+        #except:
+        #    await botmsg_delete(botmsg) #delete old grabbing stats message
+        #    #Create console report for failed stat grab
+        #    print("[!!!]Error grabbing comp stats for " + bTag)
+        #    await client.send_message(message.channel, "Error grabbing stats... :cry: \nMaybe retry?")
 
 
 
@@ -76,6 +77,7 @@ async def stat_grab(bTag):
     client = AsyncOWAPI()
     #initiate some variables
     data = {}
+    topHeroes={}
     stat_success = 0
     tries = 0
     blizzID=bTag
@@ -86,14 +88,15 @@ async def stat_grab(bTag):
             #try to grab stats and store them in dict 'data'
             try:
                 data[PC] = await client.get_stats(blizzID, session=session, platform=PC)
+                topHeroes = await top_heroes(bTag)
                 stat_success = 1
-            #after 3 timeouts, report error and exit
+            #after 5 timeouts, report error and exit
             except:
                 print("Failed...retrying.")
                 tries += 1
-                if tries == 3:
+                if tries == 5:
                     return "Error grabbing stats.."
-        return data
+        return data,topHeroes
 
 #just to make the code a little easier to read
 async def botmsg_delete(botmsg):

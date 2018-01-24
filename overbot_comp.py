@@ -6,9 +6,13 @@
 
 import discord
 
-def message_create(data, bTag):
+from overbot_heroes import top_heroes
+
+def message_create(data, bTag, topHeroes):
 
     gametype = 'competitive'
+    #count used for top hero grab tries
+    count=0
     
     ##DATA COLLECTION##
     #Medals
@@ -30,11 +34,9 @@ def message_create(data, bTag):
     owLink = "https://playoverwatch.com/en-us/career/pc/" + bName + '-' + bNum
     profLinks = "[Official Profile](" + owLink + ") | [Master Overwatch](" + moLink + ") | [Overbuff](" + obLink + ")"
 
-    #initiate the embed and also provide link to Master Overwatch profile
-    #embed=discord.Embed(title="Master Overwatch Link", url=moLink, color=0xE69138)
-
     #List who the stats are for
     embed=discord.Embed(title="", value="Region: US     Platform: PC", color=0xE69138) #temporary hardcode region and platform
+    embed.add_field(name="Profile Links:", value=profLinks, inline=False)
 
     #uses compRank to determine rank icon link
     icon=icon_select(compRank)
@@ -56,8 +58,21 @@ def message_create(data, bTag):
 
     #Add Medals to Embed
     embed.add_field(name="Medals(Gold/Silver/Bronze): ", value=gold + "/" + silver + "/" + bronze, inline=False)
+	
+	
+    #Thumbnail place holder
+    embed.set_thumbnail(url=data['pc']['us'][gametype]['overall_stats']['avatar'])
 
-    embed.add_field(name="Profile Links:", value=profLinks, inline=False)
+    #Most Played heroes
+    embed.add_field(name="Most played:", value='__---------------__', inline=False)
+    embed.add_field(name="Attack:", value=str(topHeroes['mostPlayedAtt']), inline=True)
+    embed.add_field(name="Defence:", value=str(topHeroes['mostPlayedDef']), inline=True)
+    embed.add_field(name="Tank:", value=str(topHeroes['mostPlayedTank']), inline=True)
+    embed.add_field(name="Support:", value=str(topHeroes['mostPlayedSupp']), inline=True)
+    embed.add_field(name="Most played Overall:", value=str(topHeroes['mostPlayedHero']), inline=False)
+    heroUrl="http://pcox.club/resources/heroes/" + str(topHeroes['mostPlayedHero']) + ".png"
+    print(heroUrl)
+    embed.set_image(url=heroUrl)
 
 
     return embed
