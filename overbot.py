@@ -49,25 +49,25 @@ async def on_message(message):
         else:
             pass
 
-        #try:
-        #Runs stat_grab with provided bTag (More details in stat_grab)
-        data,topHeroes = await stat_grab(bTag)
-        #Does this user have competitive stats? (I may have it redirect to the quickplay command later if false)
-        if data['pc']['us']['competitive']['overall_stats']['comprank']:
-            #Runs message_create function from overbot_comp
-            embed = message_create(data, bTag, topHeroes)
-        else:
-            await client.send_message(message.channel, 'No competitive stats for ' + bTag + '!')
-            print("[!!!]No comp stats for " + bTag)
-            await botmsg_delete(botmsg)
-            return
-        await botmsg_delete(botmsg) #delete old grabbing stats message
-        await client.send_message(message.channel, embed=embed) #send message with stats
-        #except:
-        #    await botmsg_delete(botmsg) #delete old grabbing stats message
-        #    #Create console report for failed stat grab
-        #    print("[!!!]Error grabbing comp stats for " + bTag)
-        #    await client.send_message(message.channel, "Error grabbing stats... :cry: \nMaybe retry?")
+        try:
+            #Runs stat_grab with provided bTag (More details in stat_grab)
+            data,topHeroes = await stat_grab(bTag)
+            #Does this user have competitive stats? (I may have it redirect to the quickplay command later if false)
+            if data['pc']['us']['competitive']['overall_stats']['comprank']:
+                #Runs message_create function from overbot_comp
+                embed = message_create(data, bTag, topHeroes)
+            else:
+                await client.send_message(message.channel, 'No competitive stats for ' + bTag + '!')
+                print("[!!!]No comp stats for " + bTag)
+                await botmsg_delete(botmsg)
+                return
+            await botmsg_delete(botmsg) #delete old grabbing stats message
+            await client.send_message(message.channel, embed=embed) #send message with stats
+        except:
+            await botmsg_delete(botmsg) #delete old grabbing stats message
+            #Create console report for failed stat grab
+            print("[!!!]Error grabbing comp stats for " + bTag)
+            await client.send_message(message.channel, "Error grabbing stats... :cry: \nMaybe retry?")
 
 
 
