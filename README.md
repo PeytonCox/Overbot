@@ -8,6 +8,7 @@ To use this bot you must:
 -Install the following dependencies:
 ```bash
 pip install overwatch-api
-pip install discord```
+pip install discord
+```
 
 -Peyton Cox
